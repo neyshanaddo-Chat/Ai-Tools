@@ -1,6 +1,6 @@
 {
-  "name": "My AI Skills",
-  "short_name": "My AI Skills",
+  "name": "Ai Skills",
+  "short_name": "Ai Skills",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
