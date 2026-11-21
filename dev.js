@@ -6,17 +6,14 @@
 // Hover             → outline + name of the thing under the mouse
 // Click             → select it (Shift + click to select more than one)
 // Type the change   → Send
-// Send saves the request into dev/requests/ in your Ai-Tools folder, then goes back to Home.
-// Then type "go" in the chat. When the files in your folder change, the page reloads itself.
+// Send copies the request. Paste it into the Claude chat (Ctrl + V) and press Enter.
+// No folders, no File Explorer.
 (function devMode() {
   'use strict';
-  const DB = 'ai-skills-dev', STORE = 'handles', KEY = 'root';
-  let root = null;            // folder handle for the Ai-Tools folder
   let inspecting = false;
   let selected = [];          // [{ el, info }]
   let hoverEl = null;
   let draft = '';              // what you typed, kept if you close and reopen
-  let lastStamp = null;       // file modified times, for auto reload
 
   // ---------- styles ----------
   const css = document.createElement('style');
@@ -70,44 +67,6 @@
     const t = $('div', { id: 'devToast', textContent: msg, className: warn ? 'warn' : '' });
     document.body.append(t);
     setTimeout(() => t.remove(), warn ? 6000 : 3500);
-  }
-
-  // ---------- remember the folder between visits (IndexedDB) ----------
-  function idb(mode, fn) {
-    return new Promise((res, rej) => {
-      const r = indexedDB.open(DB, 1);
-      r.onupgradeneeded = () => r.result.createObjectStore(STORE);
-      r.onerror = () => rej(r.error);
-      r.onsuccess = () => {
-        const tx = r.result.transaction(STORE, mode), q = fn(tx.objectStore(STORE));
-        tx.oncomplete = () => res(q && q.result);
-        tx.onerror = () => rej(tx.error);
-      };
-    });
-  }
-  const saveHandle = (h) => idb('readwrite', (s) => s.put(h, KEY)).catch(() => {});
-  const loadHandle = () => idb('readonly', (s) => s.get(KEY)).catch(() => null);
-
-  async function hasPermission(h, ask) {
-    if (!h) return false;
-    const opts = { mode: 'readwrite' };
-    if ((await h.queryPermission(opts)) === 'granted') return true;
-    return ask ? (await h.requestPermission(opts)) === 'granted' : false;
-  }
-
-  // Called from a click (Send / Connect), so the browser is allowed to show its folder prompt.
-  async function ensureFolder() {
-    if (!('showDirectoryPicker' in window)) return null;
-    if (root && await hasPermission(root, true)) return root;
-    const saved = await loadHandle();
-    if (saved && await hasPermission(saved, true)) { root = saved; startWatching(); return root; }
-    try {
-      const h = await window.showDirectoryPicker({ id: 'ai-tools', mode: 'readwrite' });
-      try { await h.getFileHandle('index.html'); }
-      catch (_) { toast('That folder has no index.html. Pick Documents › GitHub › Ai-Tools.', true); return null; }
-      root = h; await saveHandle(h); startWatching(); updateBadge();
-      return root;
-    } catch (_) { return null; }    // cancelled
   }
 
   // ---------- naming what you picked ----------
@@ -195,7 +154,6 @@
   const badge = $('div', { id: 'devBadge' });
   function updateBadge() {
     // Reminder: dev mode is off. Click it (or press Ctrl+Shift+D) to switch it on.
-    // The folder is asked for automatically the first time you press Send.
     badge.innerHTML = '⚠ Dev mode is off. Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> or click here to pick something to change';
     badge.title = 'Turn on developer mode';
   }
@@ -215,7 +173,7 @@
         <div class="row">
           <button id="devClear">Pick again</button>
           <button id="devCancel">Cancel</button>
-          <button id="devSend" class="primary">Send ▶</button>
+          <button id="devSend" class="primary">Copy for Claude ▶</button>
         </div>`;
       document.body.append(panel);
       panel.querySelector('#devClear').onclick = () => { selected = []; renderPanel(); redraw(); };
@@ -273,73 +231,51 @@
     }
   }, true);
 
-  // ---------- Send ----------
+  // ---------- Send: copy a ready-to-paste message for Claude ----------
+  function buildMessage(text) {
+    const page = location.hash.slice(1) || 'home';
+    const lines = [
+      'Dev mode request for the Ai-Tools site:',
+      'Change: ' + text,
+      'Page: ' + page.charAt(0).toUpperCase() + page.slice(1) +
+        (document.documentElement.dataset.theme === 'dark' ? ' (dark mode)' : ' (light mode)') +
+        (document.getElementById('sidebar')?.classList.contains('open') ? ', Taskbar open' : '') +
+        `, window ${innerWidth}×${innerHeight}`
+    ];
+    if (selected.length) {
+      lines.push('Selected:');
+      selected.forEach((x, i) => {
+        const d = x.info, st = d.style;
+        lines.push(`${i + 1}. ${d.name}`);
+        lines.push(`   where: ${d.selector}`);
+        if (d.text) lines.push(`   text: "${d.text.replace(/\s+/g, ' ').slice(0, 120)}"`);
+        lines.push(`   now: ${st.fontSize}, weight ${st.fontWeight}, colour ${st.color}, background ${st.background}, ${d.box.width}×${d.box.height}px`);
+      });
+    } else lines.push('Selected: nothing (whole page)');
+    return lines.join('\n');
+  }
+  async function copy(text) {
+    try { await navigator.clipboard.writeText(text); return true; } catch (_) {}
+    try {                                               // older fallback
+      const ta = $('textarea', { value: text }); ta.style.cssText = 'position:fixed;opacity:0';
+      document.body.append(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove(); return ok;
+    } catch (_) { return false; }
+  }
   async function send() {
     const text = panel?.querySelector('#devText').value.trim();
     if (!text) return;
-    const now = new Date();
-    const stamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);
-    const request = {
-      request: text,
-      sentAt: now.toString(),
-      page: (location.hash.slice(1) || 'home'),
-      taskbarOpen: document.getElementById('sidebar')?.classList.contains('open') || false,
-      theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
-      window: { width: innerWidth, height: innerHeight },
-      selected: selected.map((s) => s.info)
-    };
-    const json = JSON.stringify(request, null, 2);
-    const folder = await ensureFolder();
-    let saved = false;
-    if (folder) {
-      try {
-        const dev = await folder.getDirectoryHandle('dev', { create: true });
-        const reqs = await dev.getDirectoryHandle('requests', { create: true });
-        const fh = await reqs.getFileHandle(`request-${stamp}.json`, { create: true });
-        const w = await fh.createWritable(); await w.write(json); await w.close();
-        saved = true;
-      } catch (_) { /* fall through to clipboard */ }
-    }
-    if (!saved) {
-      try { await navigator.clipboard.writeText('Dev request:\n' + json); } catch (_) {}
+    const msg = buildMessage(text);
+    if (!(await copy(msg))) {                           // couldn't copy: show it so it can be copied by hand
+      panel.querySelector('#devText').value = msg; panel.querySelector('#devText').select();
+      toast('Couldn\'t copy automatically. Press Ctrl + C, then paste it into the Claude chat.', true);
+      return;
     }
     panel.querySelector('#devText').value = ''; draft = '';
     setInspect(false);
     if (location.hash && location.hash !== '#home') location.hash = '#home';
-    toast(saved ? 'Sent ✓  Now type "go" in the chat.' : 'Couldn\'t save to the folder, so it\'s copied. Paste it into the chat.', !saved);
-  }
-
-  // ---------- auto reload when your folder's files change ----------
-  const WATCH = ['index.html', 'dev.js', 'manifest.webmanifest'];
-  async function stampNow() {
-    const parts = [];
-    for (const name of WATCH) {
-      try { const f = await (await root.getFileHandle(name)).getFile(); parts.push(name + ':' + f.lastModified + ':' + f.size); }
-      catch (_) { parts.push(name + ':-'); }
-    }
-    return parts.join('|');
-  }
-  let watching = false;
-  function startWatching() {
-    if (watching || !root) return;
-    watching = true;
-    setInterval(async () => {
-      if (document.hidden || !root || !(await hasPermission(root, false))) return;
-      const s = await stampNow();
-      if (lastStamp === null) { lastStamp = s; return; }
-      if (s === lastStamp) return;
-      if (inspecting && panel?.querySelector('#devText').value.trim()) return;   // don't lose what you're typing
-      lastStamp = s;
-      try { sessionStorage.setItem('dev-updated', '1'); } catch (_) {}
-      location.reload();
-    }, 2000);
+    toast('Copied ✓  Now paste it into the Claude chat (Ctrl + V) and press Enter.');
   }
 
   // ---------- start ----------
-  (async () => {
-    const saved = await loadHandle();
-    if (saved && await hasPermission(saved, false)) { root = saved; startWatching(); }
-    updateBadge();
-    try { if (sessionStorage.getItem('dev-updated')) { sessionStorage.removeItem('dev-updated'); toast('Updated ✓'); } } catch (_) {}
-  })();
+  updateBadge();
 })();
