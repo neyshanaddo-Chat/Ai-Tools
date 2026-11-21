@@ -154,7 +154,7 @@
   const badge = $('div', { id: 'devBadge' });
   function updateBadge() {
     // Reminder: dev mode is off. Click it (or press Ctrl+Shift+D) to switch it on.
-    badge.innerHTML = '⚠ Dev mode is off. Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> or click here to pick something to change';
+    badge.innerHTML = '🔒 PRIVATE PREVIEW (only you can see this copy) · Dev mode is off. Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> or click here to pick something to change';
     badge.title = 'Turn on developer mode';
   }
   badge.addEventListener('click', () => setInspect(true));
@@ -276,6 +276,27 @@
     toast('Copied ✓  Now paste it into the Claude chat (Ctrl + V) and press Enter.');
   }
 
+  // ---------- auto refresh: Claude writes dev-stamp.js (local only) whenever the private copy changes ----------
+  // (pages opened from a folder can't watch files, but they can load a script, so we load it every 1.5 s)
+  let firstStamp;
+  function checkStamp() {
+    const sc = document.createElement('script');
+    sc.src = 'dev-stamp.js?t=' + Date.now();
+    sc.onload = () => {
+      sc.remove();
+      const st = window.__devStamp;
+      if (firstStamp === undefined) { firstStamp = st; return; }
+      if (st === firstStamp) return;
+      if (inspecting && panel?.querySelector('#devText').value.trim()) return;   // don't lose what you're typing
+      try { sessionStorage.setItem('dev-updated', '1'); } catch (_) {}
+      location.reload();
+    };
+    sc.onerror = () => { sc.remove(); if (firstStamp === undefined) firstStamp = null; };
+    document.head.appendChild(sc);
+  }
+  if (location.protocol === 'file:') { checkStamp(); setInterval(() => { if (!document.hidden) checkStamp(); }, 1500); }
+
   // ---------- start ----------
   updateBadge();
+  try { if (sessionStorage.getItem('dev-updated')) { sessionStorage.removeItem('dev-updated'); toast('Updated ✓  (private preview)'); } } catch (_) {}
 })();

@@ -1,2 +1,3 @@
-# Developer-mode requests stay on your laptop
+# Developer-mode files that stay on your laptop
 dev/requests/
+dev-stamp.js
