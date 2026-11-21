@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="0.55" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#6d28d9"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#1e1b4b" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="246" cy="266" r="170" fill="url(#glow)"/>
+  <g fill="#ffffff" filter="url(#shadow)">
+    <!-- main sparkle -->
+    <path d="M236 116 C 248 212, 276 240, 372 252 C 276 264, 248 292, 236 388 C 224 292, 196 264, 100 252 C 196 240, 224 212, 236 116 Z"/>
+    <!-- small sparkle -->
+    <path d="M362 112 C 367 146, 378 157, 412 162 C 378 167, 367 178, 362 212 C 357 178, 346 167, 312 162 C 346 157, 357 146, 362 112 Z"/>
+    <!-- tiny sparkle -->
+    <path d="M352 330 C 355 350, 362 357, 382 360 C 362 363, 355 370, 352 390 C 349 370, 342 363, 322 360 C 342 357, 349 350, 352 330 Z" opacity="0.85"/>
+  </g>
+</svg>

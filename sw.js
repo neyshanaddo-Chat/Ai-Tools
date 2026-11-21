@@ -1,6 +1,6 @@
 // Service worker: keeps a downloaded copy for offline use,
 // but always prefers the newest version when online.
-const CACHE = 'site-v1'; // bump if cached files change shape
+const CACHE = 'site-v2'; // bump if cached files change shape
 const FILES = [
   './',
   'index.html',
