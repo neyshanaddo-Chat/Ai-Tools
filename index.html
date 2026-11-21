@@ -72,6 +72,13 @@
       font-size: 17px; font-weight: 500;
     }
     .nav-link.active { background: var(--color-accent); color: var(--color-bg); }
+    .nav-section { margin: 16px 0 8px; }
+    .nav-section-title {
+      margin: 0 12px 6px; font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-accent);
+    }
+    .nav-empty { margin: 0; padding: 6px 12px; font-size: 15px; opacity: 0.55; }
+    .nav-divider { height: 1px; margin: 12px 0; background: var(--color-text); opacity: 0.12; }
 
     /* Screens */
     .screen { display: none; padding: 20px; }
@@ -113,6 +120,14 @@
       <button class="close-btn" id="closeBtn" aria-label="Close menu">&times;</button>
     </div>
     <a class="nav-link" href="#home" data-screen="home">Home</a>
+
+    <div class="nav-section">
+      <h3 class="nav-section-title">Tools</h3>
+      <!-- Tool links go here -->
+      <p class="nav-empty" id="toolsEmpty">No tools yet</p>
+    </div>
+
+    <div class="nav-divider"></div>
     <a class="nav-link" href="#settings" data-screen="settings">Settings</a>
     <a class="nav-link" href="#about" data-screen="about">About</a>
   </nav>
@@ -151,7 +166,7 @@
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
     // APP_VERSION must match version.json — bump both on every change.
-    const APP_VERSION = '7';
+    const APP_VERSION = '8';
     document.getElementById('aboutVersion').textContent = 'Version ' + APP_VERSION;
     const VERSION_URL = 'version.json';
 
