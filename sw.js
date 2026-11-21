@@ -1,6 +1,6 @@
 // Service worker: keeps a downloaded copy for offline use,
 // but always prefers the newest version when online.
-const CACHE = 'myapp-v1';
+const CACHE = 'aitools-v2';
 const FILES = [
   './',
   'index.html',
@@ -29,7 +29,8 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
   if (req.url.includes('version.json')) return; // always live
   e.respondWith(
-    fetch(req)
+    // 'no-cache' makes the browser check GitHub for the newest file every time.
+    fetch(new Request(req.url, { cache: 'no-cache', credentials: 'same-origin' }))
       .then((res) => {
         const copy = res.clone();
         caches.open(CACHE).then((c) => c.put(req, copy));

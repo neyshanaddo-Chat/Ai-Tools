@@ -35,9 +35,10 @@
     /* Menu button */
     .menu-btn {
       width: 44px; height: 44px; padding: 0; border: 0; background: none;
-      display: grid; place-content: center; gap: 5px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      cursor: pointer; -webkit-appearance: none; appearance: none;
     }
-    .menu-btn span { display: block; width: 24px; height: 2px; background: var(--color-text); border-radius: 2px; }
+    .menu-btn span { display: block; width: 26px; height: 3px; background: #000; border-radius: 2px; }
 
     /* Sidebar */
     .sidebar {
@@ -55,7 +56,7 @@
     .sidebar-title { margin: 0; font-size: 18px; font-weight: 700; }
     .close-btn {
       width: 44px; height: 44px; border: 0; background: none; cursor: pointer;
-      font-size: 28px; line-height: 1; color: var(--color-text);
+      font-size: 28px; line-height: 1; color: #000;
     }
     .backdrop {
       position: fixed; inset: 0; z-index: 20;
@@ -105,20 +106,23 @@
 
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
+    // APP_VERSION must match version.json — bump both on every change.
+    const APP_VERSION = '6';
     const VERSION_URL = 'version.json';
-    let current = null;
 
     async function checkForUpdate() {
       try {
         const res = await fetch(VERSION_URL + '?t=' + Date.now(), { cache: 'no-store' });
         if (!res.ok) return;
         const { version } = await res.json();
-        if (current === null) { current = version; return; }
-        if (version !== current) {
-          const reg = await navigator.serviceWorker?.getRegistration();
-          if (reg) await reg.update();
-          location.reload();
-        }
+        if (version === APP_VERSION) return;
+        // Only try once per new version, so a slow server can't cause a reload loop.
+        const key = 'reloaded-for-' + version;
+        if (sessionStorage.getItem(key)) return;
+        sessionStorage.setItem(key, '1');
+        const reg = await navigator.serviceWorker?.getRegistration();
+        if (reg) await reg.update();
+        location.reload();
       } catch (_) { /* offline: keep running the downloaded copy */ }
     }
 
