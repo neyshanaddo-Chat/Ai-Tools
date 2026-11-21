@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Ai Skills</title>
+  <title>Ai-Tools</title>
   <meta name="theme-color" content="#ffffff" id="themeColor">
   <script>
     // Apply saved light/dark choice before the page draws (no flash).
@@ -41,6 +41,7 @@
     .header { display: flex; align-items: center; }
     .title { margin: 0; flex: 1; font-size: 22px; font-weight: 700; text-align: center; }
     .header-spacer { width: 44px; }
+    .title-version { font-size: 13px; font-weight: 600; opacity: 0.55; margin-left: 4px; vertical-align: middle; }
 
     /* Menu button */
     .menu-btn {
@@ -101,6 +102,18 @@
     .segmented button.active { background: var(--color-accent); color: #fff; }
     .sub-heading { margin: 20px 0 6px; font-size: 17px; color: var(--color-accent); }
     .sub-sub-heading { margin: 10px 0 4px; font-size: 15px; font-weight: 600; }
+
+    /* Feedback form */
+    .feedback-form { display: flex; flex-direction: column; gap: 6px; max-width: 520px; }
+    .feedback-form label { font-size: 15px; font-weight: 600; margin-top: 8px; }
+    .feedback-form input, .feedback-form textarea {
+      font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 10px;
+      border: 2px solid var(--color-accent); background: var(--color-bg); color: var(--color-text);
+    }
+    .btn-primary {
+      margin-top: 12px; align-self: flex-start; border: 0; border-radius: 10px; padding: 10px 18px;
+      font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; background: var(--color-accent); color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -110,13 +123,15 @@
       <button class="menu-btn" id="menuBtn" aria-label="Open taskbar" aria-controls="sidebar" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
-      <h1 class="title">Ai Skills</h1>
+      <h1 class="title">Ai-Tools <span class="title-version">v1</span></h1>
       <div class="header-spacer"></div>
     </header>
 
     <!-- Home (main screen) -->
     <main class="screen" id="screen-home">
-      <h2>Welcome to Ai-Tools 👋</h2>
+      <h2>Welcome to Ai-Tools 😊</h2>
+      <p class="muted">A growing collection of AI skills, tools and workflows.</p>
+      <h3 class="sub-heading">Coming soon</h3>
     </main>
 
     <section class="screen" id="screen-settings">
@@ -140,6 +155,24 @@
       <p class="muted">No photos yet.</p>
     </section>
 
+    <section class="screen" id="screen-coming-soon">
+      <h2>Coming soon</h2>
+      <p class="muted">New AI skills, tools and workflows are on the way. Check back soon.</p>
+    </section>
+
+    <section class="screen" id="screen-feedback">
+      <h2>Feedback</h2>
+      <p class="muted">Ideas, bugs or skills you'd like to see? Let us know.</p>
+      <form id="feedbackForm" class="feedback-form">
+        <label for="fbName">Name (optional)</label>
+        <input id="fbName" type="text" maxlength="60" autocomplete="name">
+        <label for="fbText">Your feedback</label>
+        <textarea id="fbText" rows="5" maxlength="2000" required></textarea>
+        <button type="submit" class="btn-primary">Send feedback</button>
+        <p class="muted" id="fbNote" hidden></p>
+      </form>
+    </section>
+
     <section class="screen" id="screen-about">
       <h2>About</h2>
       <p>Ai Skills — a short description goes here.</p>
@@ -156,8 +189,10 @@
     <a class="nav-link" href="#home" data-screen="home">Home</a>
     <a class="nav-link" href="#gallery" data-screen="gallery">Gallery</a>
     <a class="nav-link" href="#apps" data-screen="apps">Apps</a>
+    <a class="nav-link" href="#coming-soon" data-screen="coming-soon">Coming soon</a>
 
     <div class="nav-divider"></div>
+    <a class="nav-link" href="#feedback" data-screen="feedback">Feedback</a>
     <a class="nav-link" href="#settings" data-screen="settings">Settings</a>
     <a class="nav-link" href="#about" data-screen="about">About</a>
   </nav>
@@ -179,7 +214,7 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
 
     // ---- Screens (must match the screen-<name> ids and menu links) ----
-    const SCREENS = ['home', 'apps', 'gallery', 'settings', 'about'];
+    const SCREENS = ['home', 'apps', 'gallery', 'coming-soon', 'feedback', 'settings', 'about'];
     function showScreen() {
       let name = location.hash.slice(1);
       if (!SCREENS.includes(name)) name = 'home';
@@ -191,6 +226,20 @@
     window.addEventListener('hashchange', showScreen);
     document.querySelectorAll('.nav-link').forEach((a) => a.addEventListener('click', () => setMenu(false)));
     showScreen();
+
+    // ---- Feedback: opens the visitor's email app with the message filled in ----
+    const FEEDBACK_EMAIL = '';   // ← set the address feedback should go to
+    document.getElementById('feedbackForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const note = document.getElementById('fbNote');
+      const text = document.getElementById('fbText').value.trim();
+      if (!text) return;
+      if (!FEEDBACK_EMAIL) { note.hidden = false; note.textContent = 'Feedback isn\'t switched on yet. Please check back soon.'; return; }
+      const name = document.getElementById('fbName').value.trim();
+      const body = text + (name ? '\n\n— ' + name : '');
+      location.href = 'mailto:' + FEEDBACK_EMAIL + '?subject=' + encodeURIComponent('Ai-Tools feedback') + '&body=' + encodeURIComponent(body);
+      note.hidden = false; note.textContent = 'Your email app should open with your message. Press Send there. Thank you!';
+    });
 
     // ---- Light / dark mode ----
     function applyTheme(theme) {
@@ -209,7 +258,7 @@
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
     // APP_VERSION must match version.json — bump both on every change.
-    const APP_VERSION = '31';
+    const APP_VERSION = '32';
     document.getElementById('aboutVersion').textContent = 'Version ' + APP_VERSION;
     const VERSION_URL = 'version.json';
 
@@ -237,15 +286,18 @@
       });
     }
 
-    checkForUpdate();
-    setInterval(() => { if (!document.hidden) checkForUpdate(); }, 5000);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdate(); });
-    window.addEventListener('focus', checkForUpdate);
+    // Only online: a copy opened from a folder can't fetch version.json.
+    if (location.protocol.startsWith('http')) {
+      checkForUpdate();
+      setInterval(() => { if (!document.hidden) checkForUpdate(); }, 5000);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdate(); });
+      window.addEventListener('focus', checkForUpdate);
+    }
   </script>
 
   <script>
-    // Developer mode (Ctrl + Shift + D): only in the copy opened from your laptop folder, never on the public site.
-    if (location.protocol === 'file:' || /[?&]dev=1/.test(location.search)) {
+    // Local-only helper: loads only when opened from a folder, never on the public site.
+    if (location.protocol === 'file:') {
       const s = document.createElement('script'); s.src = 'dev.js'; document.body.appendChild(s);
     }
   </script>

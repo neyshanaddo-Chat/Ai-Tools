@@ -1,3 +1,6 @@
-# Developer-mode files that stay on your laptop
+# Local-only files (never published)
+dev.js
 dev/requests/
 dev-stamp.js
+dev-status.js
+dev-diff.js

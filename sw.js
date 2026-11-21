@@ -33,8 +33,7 @@ self.addEventListener('fetch', (e) => {
     // 'no-cache' makes the browser check GitHub for the newest file every time.
     fetch(new Request(req.url, { cache: 'no-cache', credentials: 'same-origin' }))
       .then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(req, copy));
+        if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }   // never store error pages
         return res;
       })
       .catch(() => caches.match(req).then((r) => r || caches.match('index.html')))
