@@ -24,8 +24,10 @@
     #devBadge { position: fixed; left: 10px; bottom: 10px; z-index: 2147483000; display: flex; gap: 6px; align-items: center;
       background: #1a1206; color: #ffbf69; border: 1px solid #ff9f1c; border-radius: 8px; padding: 6px 9px; }
     body.dev-inspect #devBadge { display: none; }
-    #devBadge button { font: inherit; font-size: 12px; padding: 2px 8px; border-radius: 6px; cursor: pointer;
-      background: transparent; color: inherit; border: 1px solid currentColor; }
+    #devBadge { cursor: pointer; font-weight: 600; box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+    #devBadge:hover { background: #ff9f1c; color: #1a1206; }
+    #devBadge kbd { font: inherit; font-weight: 700; background: rgba(255,159,28,.18); border: 1px solid currentColor;
+      border-radius: 4px; padding: 0 5px; }
     .dev-box { position: fixed; z-index: 2147482990; pointer-events: none; box-sizing: border-box; border-radius: 3px; }
     .dev-box.hover { outline: 2px dashed #ff9f1c; background: rgba(255,159,28,.10); }
     .dev-box.sel { outline: 3px solid #ff3d7f; background: rgba(255,61,127,.12); }
@@ -191,14 +193,12 @@
   // ---------- badge (bottom-left) ----------
   const badge = $('div', { id: 'devBadge' });
   function updateBadge() {
-    badge.replaceChildren(
-      $('span', { textContent: 'DEV · Ctrl+Shift+D' }),
-      ...(root ? [] : [$('button', { textContent: 'Connect folder', onclick: async () => {
-        if (!('showDirectoryPicker' in window)) { toast('Use Chrome or Edge to connect the folder.', true); return; }
-        if (await ensureFolder()) toast('Folder connected ✓');
-      } })])
-    );
+    // Reminder: dev mode is off. Click it (or press Ctrl+Shift+D) to switch it on.
+    // The folder is asked for automatically the first time you press Send.
+    badge.innerHTML = '⚠ Dev mode is off. Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> or click here to pick something to change';
+    badge.title = 'Turn on developer mode';
   }
+  badge.addEventListener('click', () => setInspect(true));
   document.body.append(badge);
 
   // ---------- panel ----------
