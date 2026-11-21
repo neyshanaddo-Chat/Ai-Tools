@@ -1,12 +1,13 @@
 // Service worker: keeps a downloaded copy for offline use,
 // but always prefers the newest version when online.
-const CACHE = 'site-v2'; // bump if cached files change shape
+const CACHE = 'site-v3'; // bump if cached files change shape
 const FILES = [
   './',
   'index.html',
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/icon-512.png',
+  'icons/icon-maskable-512.png',
   'icons/apple-touch-icon.png'
 ];
 
