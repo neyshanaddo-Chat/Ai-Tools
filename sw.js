@@ -1,6 +1,6 @@
 // Service worker: keeps a downloaded copy for offline use,
 // but always prefers the newest version when online.
-const CACHE = 'aitools-v2';
+const CACHE = 'site-v1'; // bump if cached files change shape
 const FILES = [
   './',
   'index.html',
