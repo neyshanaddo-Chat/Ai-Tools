@@ -201,7 +201,7 @@
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
     // APP_VERSION must match version.json — bump both on every change.
-    const APP_VERSION = '20';
+    const APP_VERSION = '21';
     document.getElementById('aboutVersion').textContent = 'Version ' + APP_VERSION;
     const VERSION_URL = 'version.json';
 
@@ -221,7 +221,7 @@
       } catch (_) { /* offline: keep running the downloaded copy */ }
     }
 
-    if ('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
       navigator.serviceWorker.register('sw.js');
       let reloaded = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -233,6 +233,13 @@
     setInterval(() => { if (!document.hidden) checkForUpdate(); }, 5000);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdate(); });
     window.addEventListener('focus', checkForUpdate);
+  </script>
+
+  <script>
+    // Developer mode (Ctrl + Shift + D): only in the copy opened from your laptop folder, never on the public site.
+    if (location.protocol === 'file:' || /[?&]dev=1/.test(location.search)) {
+      const s = document.createElement('script'); s.src = 'dev.js'; document.body.appendChild(s);
+    }
   </script>
 </body>
 </html>
