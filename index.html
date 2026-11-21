@@ -13,13 +13,19 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Ai Tools">
   <style>
-    html, body { margin: 0; height: 100%; background: #fff; }
-    body { font-family: system-ui, -apple-system, sans-serif; color: #111; }
+    /* The 3 site colours — change these to restyle everything */
+    :root {
+      --color-bg: #ffffff;      /* 1. background */
+      --color-text: #111111;    /* 2. text */
+      --color-accent: #2563eb;  /* 3. accent (highlights, buttons, lines) */
+    }
+    html, body { margin: 0; height: 100%; background: var(--color-bg); }
+    body { font-family: system-ui, -apple-system, sans-serif; color: var(--color-text); }
     #app { min-height: 100%; }
     .header {
       position: sticky; top: 0; z-index: 10;
-      background: #fff;
-      border-bottom: 1px solid #e5e5e5;
+      background: var(--color-bg);
+      border-bottom: 3px solid var(--color-accent);
       padding: calc(env(safe-area-inset-top) + 14px) 20px 14px;
     }
     .title { margin: 0; font-size: 22px; font-weight: 700; text-align: center; }
