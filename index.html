@@ -16,13 +16,21 @@
     html, body { margin: 0; height: 100%; background: #fff; }
     body { font-family: system-ui, -apple-system, sans-serif; color: #111; }
     #app { min-height: 100%; }
-    .title { margin: 0; padding: calc(env(safe-area-inset-top) + 24px) 20px 12px; font-size: 28px; font-weight: 700; text-align: center; }
+    .header {
+      position: sticky; top: 0; z-index: 10;
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+      padding: calc(env(safe-area-inset-top) + 14px) 20px 14px;
+    }
+    .title { margin: 0; font-size: 22px; font-weight: 700; text-align: center; }
   </style>
 </head>
 <body>
   <!-- Blank canvas. Tools get added inside #app. -->
   <div id="app">
-    <h1 class="title">Ai Tools</h1>
+    <header class="header">
+      <h1 class="title">Ai Tools</h1>
+    </header>
   </div>
 
   <script>
