@@ -40,7 +40,9 @@
     }
     .header { display: flex; align-items: center; }
     .title { margin: 0; flex: 1; font-size: 22px; font-weight: 700; text-align: center; }
-    .header-spacer { width: 44px; }
+    .header-spacer { width: 88px; }   /* matches ☰ + Home on the left, so the title stays centred */
+    .home-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--color-text); border-radius: 10px; }
+    .home-btn:hover { background: rgba(127,127,127,.12); }
     .title-version { font-size: 13px; font-weight: 600; opacity: 0.55; margin-left: 4px; vertical-align: middle; }
 
     /* Menu button */
@@ -127,6 +129,14 @@
       background: var(--color-accent); color: #fff;
     }
     .app-tip { margin-top: 14px; font-size: 14px; }
+    /* Card with two buttons (Play + Download) */
+    .app-main { flex: 1; display: flex; align-items: center; gap: 14px; min-width: 0; color: inherit; text-decoration: none; }
+    .app-actions { flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+    .app-actions a { text-align: center; text-decoration: none; white-space: nowrap; }
+    .app-dl {
+      padding: 8px 12px; border-radius: 10px; font-weight: 700; font-size: 14px;
+      border: 2px solid var(--color-accent); color: var(--color-accent);
+    }
     .btn-primary {
       margin-top: 12px; align-self: flex-start; border: 0; border-radius: 10px; padding: 10px 18px;
       font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; background: var(--color-accent); color: #fff;
@@ -140,6 +150,9 @@
       <button class="menu-btn" id="menuBtn" aria-label="Open taskbar" aria-controls="sidebar" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
+      <a class="home-btn" href="#home" aria-label="Home" title="Home">
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 9v11h5v-6h3v6h5V9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
+      </a>
       <h1 class="title">Ai-Tools <span class="title-version">v1</span></h1>
       <div class="header-spacer"></div>
     </header>
@@ -165,14 +178,28 @@
     <section class="screen" id="screen-apps">
       <h2>Apps</h2>
       <div class="app-list">
-        <a class="app-card" href="apps/paddle-duel/index.html">
-          <img class="app-icon" src="apps/paddle-duel/icons/icon-192.png" alt="" width="64" height="64">
-          <span class="app-info">
-            <span class="app-name">Paddle Duel</span>
-            <span class="app-desc">Classic paddle game. Play a friend on one phone, or take on the computer (Easy to Hardcore).</span>
-            <span class="app-tags">2 players · vs computer · works offline</span>
+        <div class="app-card">
+          <a class="app-main" href="apps/paddle-duel/index.html">
+            <img class="app-icon" src="apps/paddle-duel/icons/icon-192.png" alt="" width="64" height="64">
+            <span class="app-info">
+              <span class="app-name">Paddle Duel</span>
+              <span class="app-desc">Classic paddle game. Play a friend on one phone, or take on the computer (Easy to Hardcore).</span>
+              <span class="app-tags">2 players · vs computer · works offline</span>
+            </span>
+          </a>
+          <span class="app-actions">
+            <a class="app-play" href="apps/paddle-duel/index.html">Play ▶</a>
+            <a class="app-dl" href="apps/paddle-duel/index.html?install=1" data-install>⬇ Download</a>
           </span>
-          <span class="app-play">Play ▶</span>
+        </div>
+        <a class="app-card" href="apps/tick-clock/index.html">
+          <img class="app-icon" src="apps/tick-clock/icons/icon-192.png" alt="" width="64" height="64">
+          <span class="app-info">
+            <span class="app-name">Tick Clock</span>
+            <span class="app-desc">Clock, world clock, alarms, timer and stopwatch in one simple app.</span>
+            <span class="app-tags">5 tools · nightstand mode · works offline</span>
+          </span>
+          <span class="app-play">Open ▶</span>
         </a>
       </div>
       <p class="muted app-tip">Tip: turn your phone sideways for the best court.</p>
@@ -181,6 +208,16 @@
     <section class="screen" id="screen-gallery">
       <h2>Gallery</h2>
       <p class="muted">No photos yet.</p>
+    </section>
+
+    <section class="screen" id="screen-tools">
+      <h2>Tools</h2>
+      <p class="muted">No tools yet. AI tools you can use will appear here.</p>
+    </section>
+
+    <section class="screen" id="screen-workflows">
+      <h2>Workflows</h2>
+      <p class="muted">No workflows yet. Ready-made AI workflows will appear here.</p>
     </section>
 
     <section class="screen" id="screen-coming-soon">
@@ -217,6 +254,8 @@
     <a class="nav-link" href="#home" data-screen="home">Home</a>
     <a class="nav-link" href="#gallery" data-screen="gallery">Gallery</a>
     <a class="nav-link" href="#apps" data-screen="apps">Apps</a>
+    <a class="nav-link" href="#tools" data-screen="tools">Tools</a>
+    <a class="nav-link" href="#workflows" data-screen="workflows">Workflows</a>
     <a class="nav-link" href="#coming-soon" data-screen="coming-soon">Coming soon</a>
 
     <div class="nav-divider"></div>
@@ -242,7 +281,7 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
 
     // ---- Screens (must match the screen-<name> ids and menu links) ----
-    const SCREENS = ['home', 'apps', 'gallery', 'coming-soon', 'feedback', 'settings', 'about'];
+    const SCREENS = ['home', 'apps', 'tools', 'workflows', 'gallery', 'coming-soon', 'feedback', 'settings', 'about'];
     function showScreen() {
       let name = location.hash.slice(1);
       if (!SCREENS.includes(name)) name = 'home';
@@ -286,7 +325,7 @@
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
     // APP_VERSION must match version.json — bump both on every change.
-    const APP_VERSION = '33';
+    const APP_VERSION = '35';
     document.getElementById('aboutVersion').textContent = 'Version ' + APP_VERSION;
     const VERSION_URL = 'version.json';
 
@@ -321,6 +360,29 @@
       document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdate(); });
       window.addEventListener('focus', checkForUpdate);
     }
+  </script>
+
+  <script>
+    // ---- ⬇ Download buttons ----
+    // Inside the installed Ai-Tools app a phone can't install another app, so send the page to the real browser:
+    // Android → Chrome (shows its Install button); iPhone → Safari (Share → Add to Home Screen).
+    // In a normal browser tab the link just opens and the app offers to install itself.
+    document.querySelectorAll('a[data-install]').forEach((a) => a.addEventListener('click', (e) => {
+      const inApp = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+      if (!inApp || !location.protocol.startsWith('http')) return;
+      const url = new URL(a.getAttribute('href'), location.href);
+      const ua = navigator.userAgent;
+      const iOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if (/Android/i.test(ua)) {
+        e.preventDefault();
+        location.href = 'intent://' + url.host + url.pathname + url.search +
+          '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url.href) + ';end';
+      } else if (iOS) {
+        e.preventDefault();
+        location.href = 'x-safari-' + url.href;                 // opens Safari (if this iOS version supports it)
+        setTimeout(() => { if (!document.hidden) location.href = url.href; }, 1500);   // otherwise open it here with the steps
+      }
+    }));
   </script>
 
   <script>
