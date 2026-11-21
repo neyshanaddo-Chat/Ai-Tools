@@ -85,6 +85,8 @@
     .screen.active { display: block; }
     .screen h2 { margin: 0 0 12px; font-size: 20px; }
     .muted { opacity: 0.6; }
+    .sub-heading { margin: 20px 0 6px; font-size: 17px; color: var(--color-accent); }
+    .sub-sub-heading { margin: 10px 0 4px; font-size: 15px; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -106,6 +108,18 @@
       <p class="muted">No settings yet.</p>
     </section>
 
+    <section class="screen" id="screen-gallery">
+      <h2>Gallery</h2>
+      <p class="muted">No photos yet.</p>
+    </section>
+
+    <section class="screen" id="screen-contact">
+      <h2>Contact Us</h2>
+      <h3 class="sub-heading">Where to find us</h3>
+      <h4 class="sub-sub-heading">Location</h4>
+      <p class="muted">Address coming soon.</p>
+    </section>
+
     <section class="screen" id="screen-about">
       <h2>About</h2>
       <p>Ai Tools — your personal tools app.</p>
@@ -120,6 +134,8 @@
       <button class="close-btn" id="closeBtn" aria-label="Close menu">&times;</button>
     </div>
     <a class="nav-link" href="#home" data-screen="home">Home</a>
+    <a class="nav-link" href="#gallery" data-screen="gallery">Gallery</a>
+    <a class="nav-link" href="#contact" data-screen="contact">Contact Us</a>
 
     <div class="nav-section">
       <h3 class="nav-section-title">Tools</h3>
@@ -149,7 +165,7 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
 
     // ---- Screens: Home / Settings / About ----
-    const SCREENS = ['home', 'settings', 'about'];
+    const SCREENS = ['home', 'gallery', 'contact', 'settings', 'about'];
     function showScreen() {
       let name = location.hash.slice(1);
       if (!SCREENS.includes(name)) name = 'home';
@@ -166,7 +182,7 @@
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
     // APP_VERSION must match version.json — bump both on every change.
-    const APP_VERSION = '8';
+    const APP_VERSION = '9';
     document.getElementById('aboutVersion').textContent = 'Version ' + APP_VERSION;
     const VERSION_URL = 'version.json';
 
