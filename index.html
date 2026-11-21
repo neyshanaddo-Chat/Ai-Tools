@@ -28,16 +28,80 @@
       border-bottom: 3px solid var(--color-accent);
       padding: calc(env(safe-area-inset-top) + 14px) 20px 14px;
     }
-    .title { margin: 0; font-size: 22px; font-weight: 700; text-align: center; }
+    .header { display: flex; align-items: center; }
+    .title { margin: 0; flex: 1; font-size: 22px; font-weight: 700; text-align: center; }
+    .header-spacer { width: 44px; }
+
+    /* Menu button */
+    .menu-btn {
+      width: 44px; height: 44px; padding: 0; border: 0; background: none;
+      display: grid; place-content: center; gap: 5px; cursor: pointer;
+    }
+    .menu-btn span { display: block; width: 24px; height: 2px; background: var(--color-text); border-radius: 2px; }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 30;
+      width: min(280px, 80vw);
+      background: var(--color-bg);
+      border-right: 3px solid var(--color-accent);
+      padding: calc(env(safe-area-inset-top) + 14px) 16px 16px;
+      box-sizing: border-box;
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .sidebar-title { margin: 0; font-size: 18px; font-weight: 700; }
+    .close-btn {
+      width: 44px; height: 44px; border: 0; background: none; cursor: pointer;
+      font-size: 28px; line-height: 1; color: var(--color-text);
+    }
+    .backdrop {
+      position: fixed; inset: 0; z-index: 20;
+      background: rgba(0, 0, 0, 0.35);
+      opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+    }
+    .backdrop.open { opacity: 1; pointer-events: auto; }
   </style>
 </head>
 <body>
   <!-- Blank canvas. Tools get added inside #app. -->
   <div id="app">
     <header class="header">
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
       <h1 class="title">Ai Tools</h1>
+      <div class="header-spacer"></div>
     </header>
   </div>
+
+  <div class="backdrop" id="backdrop"></div>
+  <nav class="sidebar" id="sidebar" aria-label="Menu" aria-hidden="true">
+    <div class="sidebar-top">
+      <h2 class="sidebar-title">Menu</h2>
+      <button class="close-btn" id="closeBtn" aria-label="Close menu">&times;</button>
+    </div>
+    <!-- Menu items go here -->
+  </nav>
+
+  <script>
+    // ---- Sidebar open / close ----
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('backdrop');
+    const menuBtn = document.getElementById('menuBtn');
+    function setMenu(open) {
+      sidebar.classList.toggle('open', open);
+      backdrop.classList.toggle('open', open);
+      menuBtn.setAttribute('aria-expanded', open);
+      sidebar.setAttribute('aria-hidden', !open);
+    }
+    menuBtn.addEventListener('click', () => setMenu(true));
+    document.getElementById('closeBtn').addEventListener('click', () => setMenu(false));
+    backdrop.addEventListener('click', () => setMenu(false));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+  </script>
 
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
