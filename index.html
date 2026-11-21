@@ -4,12 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title></title>
-  <style>html, body { margin: 0; height: 100%; background: #fff; }</style>
+  <style>
+    html, body { margin: 0; height: 100%; background: #fff; }
+    body { display: flex; align-items: center; justify-content: center; font-family: system-ui, -apple-system, sans-serif; color: #111; }
+    .center-text { font-size: 48px; font-weight: 700; }
+  </style>
 </head>
 <body>
+  <div class="center-text">v1</div>
   <script>
     // Blank on purpose. Kept only so installed devices pick up the next build automatically.
-    const APP_VERSION = '15';
+    const APP_VERSION = '16';
     async function checkForUpdate() {
       try {
         const res = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
