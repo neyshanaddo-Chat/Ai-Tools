@@ -130,6 +130,11 @@
       </div>
     </section>
 
+    <section class="screen" id="screen-apps">
+      <h2>Apps</h2>
+      <p class="muted">No apps yet. Apps you can install will appear here.</p>
+    </section>
+
     <section class="screen" id="screen-gallery">
       <h2>Gallery</h2>
       <p class="muted">No photos yet.</p>
@@ -150,6 +155,7 @@
     </div>
     <a class="nav-link" href="#home" data-screen="home">Home</a>
     <a class="nav-link" href="#gallery" data-screen="gallery">Gallery</a>
+    <a class="nav-link" href="#apps" data-screen="apps">Apps</a>
 
     <div class="nav-divider"></div>
     <a class="nav-link" href="#settings" data-screen="settings">Settings</a>
@@ -173,7 +179,7 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
 
     // ---- Screens (must match the screen-<name> ids and menu links) ----
-    const SCREENS = ['home', 'gallery', 'settings', 'about'];
+    const SCREENS = ['home', 'apps', 'gallery', 'settings', 'about'];
     function showScreen() {
       let name = location.hash.slice(1);
       if (!SCREENS.includes(name)) name = 'home';
@@ -203,7 +209,7 @@
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
     // APP_VERSION must match version.json — bump both on every change.
-    const APP_VERSION = '30';
+    const APP_VERSION = '31';
     document.getElementById('aboutVersion').textContent = 'Version ' + APP_VERSION;
     const VERSION_URL = 'version.json';
 
