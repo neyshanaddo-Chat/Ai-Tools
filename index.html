@@ -64,6 +64,20 @@
       opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
     }
     .backdrop.open { opacity: 1; pointer-events: auto; }
+
+    /* Menu links */
+    .nav-link {
+      display: block; padding: 14px 12px; margin-bottom: 4px;
+      border-radius: 10px; color: var(--color-text); text-decoration: none;
+      font-size: 17px; font-weight: 500;
+    }
+    .nav-link.active { background: var(--color-accent); color: var(--color-bg); }
+
+    /* Screens */
+    .screen { display: none; padding: 20px; }
+    .screen.active { display: block; }
+    .screen h2 { margin: 0 0 12px; font-size: 20px; }
+    .muted { opacity: 0.6; }
   </style>
 </head>
 <body>
@@ -76,6 +90,20 @@
       <h1 class="title">Ai Tools</h1>
       <div class="header-spacer"></div>
     </header>
+
+    <!-- Home (main screen) — tools will go here -->
+    <main class="screen" id="screen-home"></main>
+
+    <section class="screen" id="screen-settings">
+      <h2>Settings</h2>
+      <p class="muted">No settings yet.</p>
+    </section>
+
+    <section class="screen" id="screen-about">
+      <h2>About</h2>
+      <p>Ai Tools — your personal tools app.</p>
+      <p class="muted" id="aboutVersion"></p>
+    </section>
   </div>
 
   <div class="backdrop" id="backdrop"></div>
@@ -84,7 +112,9 @@
       <h2 class="sidebar-title">Menu</h2>
       <button class="close-btn" id="closeBtn" aria-label="Close menu">&times;</button>
     </div>
-    <!-- Menu items go here -->
+    <a class="nav-link" href="#home" data-screen="home">Home</a>
+    <a class="nav-link" href="#settings" data-screen="settings">Settings</a>
+    <a class="nav-link" href="#about" data-screen="about">About</a>
   </nav>
 
   <script>
@@ -102,12 +132,27 @@
     document.getElementById('closeBtn').addEventListener('click', () => setMenu(false));
     backdrop.addEventListener('click', () => setMenu(false));
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+
+    // ---- Screens: Home / Settings / About ----
+    const SCREENS = ['home', 'settings', 'about'];
+    function showScreen() {
+      let name = location.hash.slice(1);
+      if (!SCREENS.includes(name)) name = 'home';
+      SCREENS.forEach((s) => document.getElementById('screen-' + s).classList.toggle('active', s === name));
+      document.querySelectorAll('.nav-link').forEach((a) => a.classList.toggle('active', a.dataset.screen === name));
+      setMenu(false);
+      window.scrollTo(0, 0);
+    }
+    window.addEventListener('hashchange', showScreen);
+    document.querySelectorAll('.nav-link').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+    showScreen();
   </script>
 
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
     // APP_VERSION must match version.json — bump both on every change.
-    const APP_VERSION = '6';
+    const APP_VERSION = '7';
+    document.getElementById('aboutVersion').textContent = 'Version ' + APP_VERSION;
     const VERSION_URL = 'version.json';
 
     async function checkForUpdate() {
