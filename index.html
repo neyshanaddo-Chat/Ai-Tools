@@ -107,7 +107,7 @@
   <!-- Starter template. Site content goes inside #app. -->
   <div id="app">
     <header class="header">
-      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+      <button class="menu-btn" id="menuBtn" aria-label="Open taskbar" aria-controls="sidebar" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
       <h1 class="title">Ai Skills</h1>
@@ -133,18 +133,6 @@
       <p class="muted">No photos yet.</p>
     </section>
 
-    <section class="screen" id="screen-values">
-      <h2>Our Values</h2>
-      <p class="muted">Values coming soon.</p>
-    </section>
-
-    <section class="screen" id="screen-contact">
-      <h2>Contact Us</h2>
-      <h3 class="sub-heading">Where to find us</h3>
-      <h4 class="sub-sub-heading">Location</h4>
-      <p class="muted">Address coming soon.</p>
-    </section>
-
     <section class="screen" id="screen-about">
       <h2>About</h2>
       <p>Ai Skills — a short description goes here.</p>
@@ -153,15 +141,13 @@
   </div>
 
   <div class="backdrop" id="backdrop"></div>
-  <nav class="sidebar" id="sidebar" aria-label="Menu" aria-hidden="true">
+  <nav class="sidebar" id="sidebar" aria-label="Taskbar" aria-hidden="true">
     <div class="sidebar-top">
-      <h2 class="sidebar-title">Menu</h2>
-      <button class="close-btn" id="closeBtn" aria-label="Close menu">&times;</button>
+      <h2 class="sidebar-title">Taskbar</h2>
+      <button class="close-btn" id="closeBtn" aria-label="Close taskbar">&times;</button>
     </div>
     <a class="nav-link" href="#home" data-screen="home">Home</a>
     <a class="nav-link" href="#gallery" data-screen="gallery">Gallery</a>
-    <a class="nav-link" href="#values" data-screen="values">Our Values</a>
-    <a class="nav-link" href="#contact" data-screen="contact">Contact Us</a>
 
     <div class="nav-divider"></div>
     <a class="nav-link" href="#settings" data-screen="settings">Settings</a>
@@ -185,7 +171,7 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
 
     // ---- Screens (must match the screen-<name> ids and menu links) ----
-    const SCREENS = ['home', 'gallery', 'values', 'contact', 'settings', 'about'];
+    const SCREENS = ['home', 'gallery', 'settings', 'about'];
     function showScreen() {
       let name = location.hash.slice(1);
       if (!SCREENS.includes(name)) name = 'home';
@@ -215,7 +201,7 @@
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
     // APP_VERSION must match version.json — bump both on every change.
-    const APP_VERSION = '19';
+    const APP_VERSION = '20';
     document.getElementById('aboutVersion').textContent = 'Version ' + APP_VERSION;
     const VERSION_URL = 'version.json';
 
