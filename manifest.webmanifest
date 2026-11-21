@@ -1,6 +1,6 @@
 {
-  "name": "My App",
-  "short_name": "My App",
+  "name": "Ai Tools",
+  "short_name": "Ai Tools",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

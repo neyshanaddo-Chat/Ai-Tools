@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>My App</title>
+  <title>Ai Tools</title>
   <meta name="theme-color" content="#ffffff">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon-192.png">
@@ -11,16 +11,19 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="My App">
+  <meta name="apple-mobile-web-app-title" content="Ai Tools">
   <style>
     html, body { margin: 0; height: 100%; background: #fff; }
     body { font-family: system-ui, -apple-system, sans-serif; color: #111; }
     #app { min-height: 100%; }
+    .title { margin: 0; padding: calc(env(safe-area-inset-top) + 24px) 20px 12px; font-size: 28px; font-weight: 700; text-align: center; }
   </style>
 </head>
 <body>
   <!-- Blank canvas. Tools get added inside #app. -->
-  <div id="app"></div>
+  <div id="app">
+    <h1 class="title">Ai Tools</h1>
+  </div>
 
   <script>
     // ---- Auto-update: when a new version is published, the app reloads itself quietly ----
