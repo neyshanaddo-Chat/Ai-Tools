@@ -15,6 +15,7 @@
   let inspecting = false;
   let selected = [];          // [{ el, info }]
   let hoverEl = null;
+  let draft = '';              // what you typed, kept if you close and reopen
   let lastStamp = null;       // file modified times, for auto reload
 
   // ---------- styles ----------
@@ -204,7 +205,7 @@
   // ---------- panel ----------
   let panel = null;
   function renderPanel() {
-    if (!inspecting) { panel?.remove(); panel = null; return; }
+    if (!inspecting) { if (panel) draft = panel.querySelector('#devText').value; panel?.remove(); panel = null; return; }
     if (!panel) {
       panel = $('div', { id: 'devPanel' });
       panel.innerHTML = `
@@ -220,6 +221,7 @@
       panel.querySelector('#devClear').onclick = () => { selected = []; renderPanel(); redraw(); };
       panel.querySelector('#devCancel').onclick = () => setInspect(false);
       panel.querySelector('#devSend').onclick = send;
+      panel.querySelector('#devText').value = draft;
       panel.querySelector('#devText').addEventListener('input', updateSend);
     }
     const sel = panel.querySelector('#devSel');
@@ -301,6 +303,7 @@
     if (!saved) {
       try { await navigator.clipboard.writeText('Dev request:\n' + json); } catch (_) {}
     }
+    panel.querySelector('#devText').value = ''; draft = '';
     setInspect(false);
     if (location.hash && location.hash !== '#home') location.hash = '#home';
     toast(saved ? 'Sent ✓  Now type "go" in the chat.' : 'Couldn\'t save to the folder, so it\'s copied. Paste it into the chat.', !saved);
